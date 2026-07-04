@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 12,
     borderRadius: radii.pill,
-    fontFamily: 'JetBrainsMono_600SemiBold',
+    fontFamily: 'PlusJakartaSans_600SemiBold',
     fontSize: 12,
     overflow: 'hidden',
   },
