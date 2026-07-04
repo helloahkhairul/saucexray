@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "SauceXRay Web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--web"],
+      "env": { "NODE_OPTIONS": "--max-http-header-size=65536" },
+      "port": 8081
+    }
+  ]
+}
