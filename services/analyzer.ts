@@ -116,17 +116,56 @@ function mapAiToResult(url: string, ai: Record<string, unknown>): AnalysisResult
 
 const PROMPT = (url: string, real?: StoreMetadata) => {
   const facts = real?.name
-    ? `\nVERIFIED store facts (copy these EXACTLY into your JSON — do NOT change them):
-- appName: "${real.name}"
-- developer: "${real.developer ?? ''}"
-- rating: "${real.rating != null ? real.rating.toFixed(1) : ''}"
-- price: "${real.price ?? 'Free'}"
-- category: "${real.category ?? ''}"\n`
+    ? `\nVERIFIED store facts — copy these EXACTLY, do NOT alter them:
+appName="${real.name}" | developer="${real.developer ?? ''}" | rating="${real.rating != null ? real.rating.toFixed(1) : ''}" | price="${real.price ?? 'Free'}" | category="${real.category ?? ''}"\n`
     : '';
-  return `Analyze this app store URL: ${url}${facts}
-Reply with ONLY this JSON, no extra text:
-{"appName":"","developer":"","category":"","rating":"4.0","price":"Free","overview":"1-2 sentences","targetAudience":"","monetization":"","complaints":["","",""],"screenCount":10,"screenFlow":["Home","Detail"],"mustHaveFeatures":[""],"niceToHaveFeatures":[""],"techStack":[""],"difficulty":"Easy","improvements":["","",""],"buildSteps":[{"step":"Auth","time":"1hr"},{"step":"Core","time":"2hrs"},{"step":"Polish","time":"1hr"}]}
-Rules: difficulty must be exactly one of: Easy, Medium, Hard. screenCount must be an integer.`;
+  return `You are a senior mobile app analyst. Deeply analyze this app store listing and produce an accurate technical breakdown.
+URL: ${url}${facts}
+
+Reply with ONLY valid JSON (no markdown, no code fences):
+{
+  "appName": "",
+  "developer": "",
+  "category": "",
+  "rating": "4.5",
+  "price": "Free",
+  "overview": "2-3 sentences: what the app does, core value proposition, and user base size/type",
+  "targetAudience": "specific demographic + psychographic description",
+  "monetization": "concise model, max 6 words (e.g. 'Freemium + in-app purchases')",
+  "complaints": ["most upvoted complaint from reviews", "second complaint", "third complaint"],
+  "screenCount": 18,
+  "screenFlow": ["Splash / Onboarding", "Sign Up / Log In", "Home Dashboard", "Core Feature", "Detail / Content View", "Search", "Profile", "Settings"],
+  "mustHaveFeatures": ["feature 1", "feature 2", "feature 3", "feature 4", "feature 5"],
+  "niceToHaveFeatures": ["feature 1", "feature 2", "feature 3"],
+  "techStack": [
+    "React Native or Flutter (Mobile Framework)",
+    "Node.js / Python / Go (Backend API)",
+    "PostgreSQL / MySQL / MongoDB (Primary Database)",
+    "Redis (Caching & Sessions)",
+    "AWS S3 / Google Cloud Storage (Media Storage)",
+    "Firebase / APNs (Push Notifications)",
+    "Stripe / RevenueCat (Payments)",
+    "Cloudflare / AWS CloudFront (CDN)",
+    "Sentry / Datadog (Monitoring)",
+    "Google Analytics / Mixpanel (Analytics)"
+  ],
+  "difficulty": "Medium",
+  "improvements": ["specific actionable improvement 1", "improvement 2", "improvement 3"],
+  "buildSteps": [
+    {"step": "Auth + Onboarding", "time": "1 week"},
+    {"step": "Core Feature Set", "time": "3 weeks"},
+    {"step": "UI Polish + Testing", "time": "1 week"},
+    {"step": "Launch Prep", "time": "3 days"}
+  ]
+}
+
+Critical rules:
+- techStack: provide 8-12 REALISTIC specific technologies this app type actually uses. Replace the example items above with actual tech for THIS specific app. Include the category in parentheses.
+- difficulty: must be exactly one of: Easy, Medium, Hard
+- screenCount: realistic integer based on app complexity
+- monetization: max 6 words
+- screenFlow: 6-10 screens in logical user journey order
+- All data must reflect THIS specific app, not generic defaults`;
 };
 
 export async function analyzeApp(url: string): Promise<AnalysisResult> {
@@ -141,7 +180,7 @@ export async function analyzeApp(url: string): Promise<AnalysisResult> {
     body: JSON.stringify({
       model: 'deepseek-chat',
       messages: [{ role: 'user', content: PROMPT(url, real) }],
-      max_tokens: 800,
+      max_tokens: 1400,
       temperature: 0.3,
     }),
   });

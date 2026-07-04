@@ -158,10 +158,11 @@ function OverviewTab({ data }: { data: DisplayData }) {
         <Text style={styles.bodyText}>{data.targetAudience}</Text>
       </SectionCard>
 
-      <View style={[styles.sectionCard, shadows.card, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
-        <Text style={styles.sectionLabel}>Monetization</Text>
-        <Pill label={`💰 ${data.monetization}`} style={{ backgroundColor: colors.amberHighlight, color: colors.amberText }} />
-      </View>
+      <SectionCard title="Monetization">
+        <Text style={[styles.pill, { backgroundColor: colors.amberHighlight, color: colors.amberText, alignSelf: 'flex-start' }]}>
+          💰 {data.monetization}
+        </Text>
+      </SectionCard>
 
       <SectionCard title="Top user complaints">
         {data.complaints.map((complaint, i) => (

@@ -8,8 +8,6 @@
     "scheme": "saucexray",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
       "backgroundColor": "#FAF7F4"
     },
     "ios": {
